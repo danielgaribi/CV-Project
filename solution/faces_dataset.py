@@ -5,6 +5,9 @@ import torch
 from PIL import Image
 from torch.utils.data import Dataset
 
+REAL_LABEL = 0
+FAKE_LABEL = 1
+
 
 class FacesDataset(Dataset):
     """Faces dataset.
@@ -26,10 +29,20 @@ class FacesDataset(Dataset):
     def __getitem__(self, index) -> tuple[torch.Tensor, int]:
         """Get a sample and label from the dataset."""
         """INSERT YOUR CODE HERE, overrun return."""
+        if index < len(self.real_image_names):
+            label = REAL_LABEL
+            path = os.path.join(self.root_path, 'real', self.real_image_names[index])
+        else:
+            label = FAKE_LABEL
+            path = os.path.join(self.root_path, 'fake', self.fake_image_names[index - len(self.real_image_names)])
 
-        return torch.rand((3, 256, 256)), int(torch.randint(0, 2, size=(1, )))
+        img = Image.open(path)
+        if self.transform != None:
+            img = self.transform(img)
+
+        return img, label
 
     def __len__(self):
         """Return the number of images in the dataset."""
         """INSERT YOUR CODE HERE, overrun return."""
-        return 100
+        return len(self.real_image_names) + len(self.fake_image_names)
