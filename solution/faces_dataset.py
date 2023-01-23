@@ -46,3 +46,6 @@ class FacesDataset(Dataset):
         """Return the number of images in the dataset."""
         """INSERT YOUR CODE HERE, overrun return."""
         return len(self.real_image_names) + len(self.fake_image_names)
+
+
+##############TEST
