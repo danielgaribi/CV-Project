@@ -52,7 +52,21 @@ def get_grad_cam_visualization(test_dataset: torch.utils.data.Dataset,
         of batch size 1, it's a tensor of shape (1,)).
     """
     """INSERT YOUR CODE HERE, overrun return."""
-    return np.random.rand(256, 256, 3), torch.randint(0, 2, (1,))
+    from pytorch_grad_cam import GradCAM, HiResCAM, ScoreCAM, GradCAMPlusPlus, AblationCAM, XGradCAM, EigenCAM, FullGrad
+    from pytorch_grad_cam.utils.image import show_cam_on_image
+
+    dataloader = DataLoader(test_dataset, batch_size=1, shuffle=True)
+
+    image, label = next(iter(dataloader))
+    input_tensor = image
+    image = image.detach().squeeze().permute(1, 2, 0).cpu().numpy()
+    image = (image - np.min(image)) / (np.max(image) - np.min(image))
+    cam = GradCAM(model=model, target_layers=[model.conv3], use_cuda=torch.cuda.is_available())
+    grayscale_cam = cam(input_tensor=input_tensor)
+    grayscale_cam = grayscale_cam[0, :]
+    visualization = show_cam_on_image(image, grayscale_cam, use_rgb=True)
+
+    return visualization, label
 
 
 def main():
