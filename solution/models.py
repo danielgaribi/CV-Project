@@ -35,10 +35,10 @@ class SimpleNet(nn.Module):
 
 
 class MLP_block(nn.Module):
-    def __init__(self):
+    def __init__(self, xcpetion_fc):
         super(MLP_block, self).__init__()
 
-        self.fc1 = nn.Linear(2048, 1000)
+        self.fc1 = xcpetion_fc
         self.relu1 = nn.ReLU()
         self.fc2 = nn.Linear(1000, 256)
         self.relu2 = nn.ReLU()
@@ -65,5 +65,5 @@ def get_xception_based_model() -> nn.Module:
     classification head stated in the exercise.
     """
     custom_network = build_xception_backbone(True)
-    custom_network.fc = MLP_block()
+    custom_network.fc = MLP_block(custom_network.fc)
     return custom_network
